@@ -150,13 +150,23 @@ class _ToDoPageState extends State<ToDoPage> {
   int completedTasksCount = 0;
 
   List completedTasks = [];
+  final GlobalKey<AnimatedListState> pendingListKey =
+      GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> completedListKey =
+      GlobalKey<AnimatedListState>();
 
   void markCompleted(bool? value, int index) {
     setState(() {
       tasks[index][1] = true;
       completedTasksCount++;
       completedTasks.add(tasks[index]);
-      tasks.removeAt(index);
+      final completedTask = tasks.removeAt(index);
+      completedListKey.currentState?.insertItem(completedTasks.length - 1);
+      pendingListKey.currentState?.removeItem(
+        index,
+        (context, animation) =>
+            _buildItem(context, completedTask, animation, false),
+      );
     });
   }
 
@@ -166,13 +176,21 @@ class _ToDoPageState extends State<ToDoPage> {
       completedTasksCount--;
       List pendingTask = completedTasks.removeAt(index);
       tasks.add(pendingTask);
+      pendingListKey.currentState?.insertItem(tasks.length - 1);
+      completedListKey.currentState?.removeItem(
+        index,
+        (context, animation) =>
+            _buildItem(context, pendingTask, animation, true),
+      );
     });
   }
 
   TextEditingController newTaskController = TextEditingController();
   void _addNewTask(String newTask) {
+    if (newTask.isEmpty) return;
     setState(() {
       tasks.add([newTask, false]);
+      pendingListKey.currentState?.insertItem(tasks.length - 1);
     });
     newTaskController.clear();
     Navigator.pop(context);
@@ -180,13 +198,23 @@ class _ToDoPageState extends State<ToDoPage> {
 
   void deleteTask(int index) {
     setState(() {
-      tasks.removeAt(index);
+      final removedTask = tasks.removeAt(index);
+      pendingListKey.currentState?.removeItem(
+        index,
+        (context, animation) =>
+            _buildItem(context, removedTask, animation, false),
+      );
     });
   }
 
   void deleteCompletedTask(int index) {
     setState(() {
-      completedTasks.removeAt(index);
+      final removedTask = completedTasks.removeAt(index);
+      completedListKey.currentState?.removeItem(
+        index,
+        (context, animation) =>
+            _buildItem(context, removedTask, animation, true),
+      );
     });
   }
 
@@ -199,12 +227,12 @@ class _ToDoPageState extends State<ToDoPage> {
           true, // This makes sure the sheet is resized when the keyboard is shown
       builder: (context) {
         return Container(
-          height: 45,
+          height: 49,
           margin:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 7, 15, 15),
+              padding: const EdgeInsets.fromLTRB(12, 7, 15, 12),
               child: TextField(
                 controller: newTaskController,
                 autofocus: true,
@@ -220,14 +248,35 @@ class _ToDoPageState extends State<ToDoPage> {
                           ),
                         )),
                     fillColor: Colors.amberAccent,
+                    hintText: "Enter your task here...",
+                    // hintStyle: const TextStyle(fontSize: 20),
                     border: InputBorder.none),
                 onSubmitted: (value) => _addNewTask(value),
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 20),
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildItem(BuildContext context, List<dynamic> task,
+      Animation<double> animation, bool isCompleted) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: isCompleted
+          ? ToDoTile.completedTile(
+              taskName: task[0],
+              taskStatus: task[1],
+              onChanged: (value) =>
+                  markPending(value, completedTasks.indexOf(task)),
+            )
+          : ToDoTile.pendingTile(
+              taskName: task[0],
+              taskStatus: task[1],
+              onChanged: (value) => markCompleted(value, tasks.indexOf(task)),
+            ),
     );
   }
 
@@ -310,7 +359,7 @@ class _ToDoPageState extends State<ToDoPage> {
                     return Dismissible(
                       key: UniqueKey(),
                       dismissThresholds: const {
-                        // DismissDirection.startToEnd: 0.6
+                        DismissDirection.startToEnd: 0.7
                       },
                       background: Container(
                         color: Colors.red,
