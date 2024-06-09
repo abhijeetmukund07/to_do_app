@@ -359,14 +359,25 @@ class _ToDoPageState extends State<ToDoPage> {
                       dismissThresholds: const {
                         DismissDirection.startToEnd: 0.7
                       },
-                      background: Container(
+                      secondaryBackground: Container(
                         color: Colors.red,
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: const Icon(Icons.delete, color: Colors.white),
                       ),
+                      background: Container(
+                        color: Colors.lightBlue,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Icon(Icons.undo_outlined,
+                            color: Colors.white),
+                      ),
                       onDismissed: (direction) {
-                        deleteCompletedTask(index);
+                        if (direction == DismissDirection.endToStart) {
+                          deleteCompletedTask(index);
+                        } else if (direction == DismissDirection.startToEnd) {
+                          markPending(false, index);
+                        }
                       },
                       child: ToDoTile.completedTile(
                         taskName: completedTasks[index][0],
