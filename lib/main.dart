@@ -11,12 +11,13 @@ class ToDoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'TO DO APP',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellowAccent),
           useMaterial3: true,
           textTheme: const TextTheme(bodyMedium: TextStyle(fontSize: 20)),
         ),
-        home: ToDoPage());
+        home: const ToDoPage());
   }
 }

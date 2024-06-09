@@ -5,7 +5,13 @@ class ToDoTile extends StatelessWidget {
   final bool taskStatus;
   final Function(bool?)? onChanged;
 
-  const ToDoTile(
+  const ToDoTile.pendingTile(
+      {super.key,
+      required this.taskName,
+      required this.taskStatus,
+      required this.onChanged});
+
+const ToDoTile.completedTile(
       {super.key,
       required this.taskName,
       required this.taskStatus,

@@ -3,6 +3,140 @@ import 'package:to_do_app/widgets/add_task.dart';
 import 'package:to_do_app/widgets/add_task_bottom_sheet.dart';
 import 'package:to_do_app/widgets/to_do_tile.dart';
 
+// class ToDoPage extends StatefulWidget {
+//   const ToDoPage({super.key});
+
+//   @override
+//   State<ToDoPage> createState() => _ToDoPageState();
+// }
+
+// class _ToDoPageState extends State<ToDoPage> {
+//   List tasks = [
+//     ['Learn Flutter', false],
+//     ['Learn Firebase', false],
+//     ['Build a ToDo App', false],
+//   ];
+
+//   List completedTasks = [];
+//   int completedTasksCount = 0;
+
+// void toggleTaskStatus(bool? value, int index) {
+//   setState(() {
+//     tasks[index][1] = !tasks[index][1];
+//     if (value == true) {
+//       completedTasksCount++;
+//       completedTasks.add(tasks[index]);
+//     } else {
+//       completedTasksCount--; //*** else accounts for false when clicked on checkbox or slid left to right which gives value as null
+//       completedTasks.remove(tasks[index]);
+//     }
+//   });
+// }
+
+// void _addNewTask() {
+//   setState(() {
+//     tasks.add(['Learn Flutter', false]);
+//   });
+// }
+
+//   void deleteTask(int index) {
+//     setState(() {
+//       tasks.removeAt(index);
+//       completedTasksCount--; // ***** Might need a review ****
+//     });
+//   }
+
+// void showAddNewTaskTextField() {
+//   showModalBottomSheet(
+//     shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(0))),
+//     context: context,
+//     isScrollControlled:
+//         true, // This makes sure the sheet is resized when the keyboard is shown
+//     builder: (context) {
+//       return Container(
+//         height: 45,
+//         margin:
+//             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+//         child: Expanded(
+//           child: Padding(
+//             padding: const EdgeInsets.fromLTRB(15, 7, 15, 15),
+//             child: TextField(
+//               autofocus: true,
+//               decoration: InputDecoration(
+//                   suffixIcon: IconButton(
+//                       onPressed: _addNewTask,
+//                       icon: const Padding(
+//                         padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+//                         child: Icon(
+//                           Icons.add,
+//                           // weight: 15,
+//                           size: 25,
+//                         ),
+//                       )),
+//                   fillColor: Colors.amberAccent,
+//                   border: InputBorder.none),
+//               style: const TextStyle(fontSize: 18),
+//             ),
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'T O  D O',
+//           style: TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Colors.yellow[600],
+//       ),
+//       backgroundColor: Colors.yellow[200],
+//       body: SafeArea(
+//         child: ListView.builder(
+//           itemCount: tasks.length,
+//           itemBuilder: (context, index) {
+//             return Dismissible(
+//               key: UniqueKey(),
+//               background: Container(
+//                 color: Colors.green,
+//                 alignment: Alignment.centerLeft,
+//                 padding: const EdgeInsets.symmetric(horizontal: 20),
+//                 child: const Icon(Icons.check, color: Colors.white),
+//               ),
+//               secondaryBackground: Container(
+//                 color: Colors.red,
+//                 alignment: Alignment.centerRight,
+//                 padding: const EdgeInsets.symmetric(horizontal: 20),
+//                 child: const Icon(Icons.delete, color: Colors.white),
+//               ),
+//               onDismissed: (direction) => {
+//                 if (direction == DismissDirection.startToEnd)
+//                   {toggleTaskStatus(null, index)}
+//                 else if (direction == DismissDirection.endToStart)
+//                   {deleteTask(index)}
+//               },
+//               child: ToDoTile(
+//                   taskName: tasks[index][0],
+//                   taskStatus: tasks[index][1],
+//                   onChanged: (value) => toggleTaskStatus(value, index)),
+//             );
+//           },
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: showAddNewTaskTextField,
+//         child: const Icon(Icons.add),
+//       ),
+//     );
+//   }
+// }
+
 class ToDoPage extends StatefulWidget {
   const ToDoPage({super.key});
 
@@ -11,35 +145,48 @@ class ToDoPage extends StatefulWidget {
 }
 
 class _ToDoPageState extends State<ToDoPage> {
-  List tasks = [
-    ['Learn Flutter', false],
-    ['Learn Firebase', false],
-    ['Build a ToDo App', false],
-  ];
+  List tasks = [];
 
   int completedTasksCount = 0;
 
-  void toggleTaskStatus(bool? value, int index) {
+  List completedTasks = [];
+
+  void markCompleted(bool? value, int index) {
     setState(() {
-      tasks[index][1] = !tasks[index][1];
-      if (value == true) {
-        completedTasksCount++;
-      } else {
-        completedTasksCount--; //*** else accounts for false when clicked on checkbox or slid left to right which gives value as null
-      }
+      tasks[index][1] = true;
+      completedTasksCount++;
+      completedTasks.add(tasks[index]);
+      tasks.removeAt(index);
     });
   }
 
-  void _addNewTask() {
+  void markPending(bool? value, int index) {
     setState(() {
-      tasks.add(['Learn Flutter', false]);
+      completedTasks[index][1] = false;
+      completedTasksCount--;
+      List pendingTask = completedTasks.removeAt(index);
+      tasks.add(pendingTask);
     });
+  }
+
+  TextEditingController newTaskController = TextEditingController();
+  void _addNewTask(String newTask) {
+    setState(() {
+      tasks.add([newTask, false]);
+    });
+    newTaskController.clear();
+    Navigator.pop(context);
   }
 
   void deleteTask(int index) {
     setState(() {
       tasks.removeAt(index);
-      completedTasksCount--; // ***** Might need a review ****
+    });
+  }
+
+  void deleteCompletedTask(int index) {
+    setState(() {
+      completedTasks.removeAt(index);
     });
   }
 
@@ -59,10 +206,11 @@ class _ToDoPageState extends State<ToDoPage> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(15, 7, 15, 15),
               child: TextField(
+                controller: newTaskController,
                 autofocus: true,
                 decoration: InputDecoration(
                     suffixIcon: IconButton(
-                        onPressed: _addNewTask,
+                        onPressed: () => _addNewTask(newTaskController.text),
                         icon: const Padding(
                           padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
                           child: Icon(
@@ -73,6 +221,7 @@ class _ToDoPageState extends State<ToDoPage> {
                         )),
                     fillColor: Colors.amberAccent,
                     border: InputBorder.none),
+                onSubmitted: (value) => _addNewTask(value),
                 style: const TextStyle(fontSize: 18),
               ),
             ),
@@ -95,36 +244,96 @@ class _ToDoPageState extends State<ToDoPage> {
       ),
       backgroundColor: Colors.yellow[200],
       body: SafeArea(
-          child: ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: UniqueKey(),
-            background: Container(
-              color: Colors.green,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.check, color: Colors.white),
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Text(
+                'Completed Tasks',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
             ),
-            secondaryBackground: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
+            Divider(
+              // thickness: 0.8,
+              color: Colors.yellow[800],
             ),
-            onDismissed: (direction) => {
-              if (direction == DismissDirection.startToEnd)
-                {toggleTaskStatus(null, index)}
-              else if (direction == DismissDirection.endToStart)
-                {deleteTask(index)}
-            },
-            child: ToDoTile(
-                taskName: tasks[index][0],
-                taskStatus: tasks[index][1],
-                onChanged: (value) => toggleTaskStatus(value, index)),
-          );
-        },
-      )),
+            Expanded(
+              child: ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: UniqueKey(),
+
+                    background: Container(
+                      color: Colors.green,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.check, color: Colors.white),
+                    ),
+
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+
+                    onDismissed: (direction) {
+                      if (direction == DismissDirection.startToEnd) {
+                        markCompleted(null, index);
+                      } else if (direction == DismissDirection.endToStart) {
+                        deleteTask(index);
+                      }
+                    },
+                    //TODO Tile
+                    child: ToDoTile.pendingTile(
+                      taskName: tasks[index][0],
+                      taskStatus: tasks[index][1],
+                      onChanged: (value) => markCompleted(value, index),
+                    ),
+                  );
+                },
+              ),
+            ),
+            if (completedTasks.isNotEmpty) ...[
+              Divider(
+                color: Colors.yellow[800],
+              ),
+              const Text(
+                'Completed Tasks',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: completedTasks.length,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      key: UniqueKey(),
+                      dismissThresholds: const {
+                        // DismissDirection.startToEnd: 0.6
+                      },
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+                      onDismissed: (direction) {
+                        deleteCompletedTask(index);
+                      },
+                      child: ToDoTile.completedTile(
+                        taskName: completedTasks[index][0],
+                        taskStatus: completedTasks[index][1],
+                        onChanged: (value) => markPending(value, index),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: showAddNewTaskTextField,
         child: const Icon(Icons.add),
