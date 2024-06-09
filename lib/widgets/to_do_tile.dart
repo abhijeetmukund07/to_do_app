@@ -11,7 +11,7 @@ class ToDoTile extends StatelessWidget {
       required this.taskStatus,
       required this.onChanged});
 
-const ToDoTile.completedTile(
+  const ToDoTile.completedTile(
       {super.key,
       required this.taskName,
       required this.taskStatus,
@@ -35,11 +35,20 @@ const ToDoTile.completedTile(
             splashRadius: 25,
             materialTapTargetSize: MaterialTapTargetSize.padded,
           ),
-          Text(taskName,
-              style: taskStatus
-                  ? const TextStyle(
-                      decoration: TextDecoration.lineThrough, fontSize: 22)
-                  : const TextStyle(fontSize: 22)),
+          Expanded(
+            child: Text(taskName,
+                overflow: TextOverflow.visible,
+                maxLines: null,
+                softWrap: true,
+                style: taskStatus
+                    ? const TextStyle(
+                        decoration: TextDecoration.lineThrough,
+                        fontSize: 22,
+                      )
+                    : const TextStyle(
+                        fontSize: 22,
+                      )),
+          ),
         ],
       ),
     );

@@ -227,26 +227,24 @@ class _ToDoPageState extends State<ToDoPage> {
           true, // This makes sure the sheet is resized when the keyboard is shown
       builder: (context) {
         return Container(
-          height: 49,
           margin:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 7, 15, 12),
+              padding: const EdgeInsets.fromLTRB(12, 5, 5, 12),
               child: TextField(
+                maxLines: null,
                 controller: newTaskController,
                 autofocus: true,
                 decoration: InputDecoration(
                     suffixIcon: IconButton(
-                        onPressed: () => _addNewTask(newTaskController.text),
-                        icon: const Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                          child: Icon(
-                            Icons.add,
-                            // weight: 15,
-                            size: 25,
-                          ),
-                        )),
+                      onPressed: () => _addNewTask(newTaskController.text),
+                      icon: const Icon(
+                        Icons.add,
+                        // weight: 15,
+                        size: 25,
+                      ),
+                    ),
                     fillColor: Colors.amberAccent,
                     hintText: "Enter your task here...",
                     // hintStyle: const TextStyle(fontSize: 20),
@@ -298,7 +296,7 @@ class _ToDoPageState extends State<ToDoPage> {
             const Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: Text(
-                'Completed Tasks',
+                'Pending Tasks',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
