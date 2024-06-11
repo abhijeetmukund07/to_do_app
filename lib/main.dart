@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app/pages/to_do_page.dart';
+import 'package:to_do_app/pages/email_auth/auth_page.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const ToDoApp());
 }
 
@@ -18,6 +24,6 @@ class ToDoApp extends StatelessWidget {
           useMaterial3: true,
           textTheme: const TextTheme(bodyMedium: TextStyle(fontSize: 20)),
         ),
-        home: const ToDoPage());
+        home: const Auth());
   }
 }

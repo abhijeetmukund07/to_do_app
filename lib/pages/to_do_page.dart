@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app/widgets/add_task.dart';
-import 'package:to_do_app/widgets/add_task_bottom_sheet.dart';
 import 'package:to_do_app/widgets/to_do_tile.dart';
 
 class ToDoPage extends StatefulWidget {
@@ -156,6 +154,7 @@ class _ToDoPageState extends State<ToDoPage> {
         backgroundColor: Colors.yellow[600],
       ),
       backgroundColor: Colors.yellow[200],
+      // body: const LoginOrRegister(),
       body: SafeArea(
         child: Column(
           children: [
@@ -198,7 +197,7 @@ class _ToDoPageState extends State<ToDoPage> {
                         deleteTask(index);
                       }
                     },
-                    //TODO Tile
+                    
                     child: ToDoTile.pendingTile(
                       taskName: tasks[index][0],
                       taskStatus: tasks[index][1],
